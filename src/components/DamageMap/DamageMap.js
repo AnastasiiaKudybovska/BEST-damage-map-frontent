@@ -111,6 +111,7 @@ const DamageMap = () => {
   const [center] = useState([49.8419, 24.0315]);
   const [hasClicked, setHasClicked] = useState(false);
   const [selectedZone, setSelectedZone] = useState(null);
+  const [selectedRocket, setSelectedRocket] = useState(null);
   const [rocketType, setRocketType] = useState('');
   const [menuOpen, setMenuOpen] = useState(false);
   const anchorRef = useRef(null);
@@ -138,8 +139,9 @@ const DamageMap = () => {
 //     setMenuOpen(false);
 //   };
 
-  const handleRocketSelect = (type) => {
+  const handleRocketSelect = (type, tntEquivalent) => {
     setRocketType(type);
+    setSelectedRocket({ type, tntEquivalent });
     setMenuOpen(false);
   };
 
@@ -148,6 +150,7 @@ const DamageMap = () => {
     if (rocketType) {
       console.log(`Rocket type: ${rocketType}`);
     }
+    sendDamageData(latlng); 
     
     if (!hasClicked) {
       const updatedPolygons = initialData.map((poly) => {
@@ -214,6 +217,19 @@ const DamageMap = () => {
     }
   };
 
+  const sendDamageData = (latlng) => {
+    if (!selectedRocket) return;
+  
+    const payload = {
+      latitude: latlng.lat,
+      longitude: latlng.lng,
+      trotil_equivalent: selectedRocket.tntEquivalent,
+    };
+  
+    console.log('Sending payload to backend:', payload);
+  
+  };
+
   return (
     <Box sx={{ 
       height: '100vh',
@@ -266,7 +282,7 @@ const DamageMap = () => {
             />
             <RocketTypeFilter
               rocketType={rocketType}
-              handleRocketSelect={handleRocketSelect}
+              handleRocketSelect={handleRocketSelect} // Тепер передаємо нову функцію
               menuOpen={menuOpen}
               handleMenuToggle={handleMenuToggle}
               anchorRef={anchorRef}

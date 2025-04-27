@@ -9,6 +9,7 @@ export const DamageZoneFilter = ({
   selectedZone, 
   setSelectedZone, 
   handleResetFilter,
+  handleRocketSelection,
   zoneColors,
   zoneNames
 }) => (
@@ -68,9 +69,24 @@ export const RocketTypeFilter = ({
   anchorRef 
 }) => {
   const rocketTypes = [
-    { value: 'shahed', label: 'Shahed Drone', icon: <MopedSharpIcon fontSize="small" /> },
-    { value: 'ballistic', label: 'Ballistic Missile', icon: <RocketIcon fontSize="small" /> },
-    { value: 'cruise', label: 'Cruise Missile', icon: <RocketLaunchIcon fontSize="small" /> }
+    { 
+      value: 'shahed', 
+      label: 'Shahed Drone', 
+      icon: <MopedSharpIcon fontSize="small" />,
+      tntEquivalent: 50 
+    },
+    { 
+      value: 'ballistic', 
+      label: 'Ballistic Missile', 
+      icon: <RocketIcon fontSize="small" />,
+      tntEquivalent: 1500 
+    },
+    { 
+      value: 'cruise', 
+      label: 'Cruise Missile', 
+      icon: <RocketLaunchIcon fontSize="small" />,
+      tntEquivalent: 500
+    }
   ];
 
   const getRocketIcon = (type) => {
@@ -122,7 +138,7 @@ export const RocketTypeFilter = ({
           <MenuItem
             key={type.value}
             selected={rocketType === type.value}
-            onClick={() => handleRocketSelect(type.value)}
+            onClick={() => handleRocketSelect(type.value, type.tntEquivalent)}
             sx={{
               display: 'flex',
               alignItems: 'center',
@@ -133,7 +149,12 @@ export const RocketTypeFilter = ({
             }}
           >
             {type.icon}
-            {type.label}
+            <Box>
+              <div>{type.label}</div>
+              <div style={{ fontSize: '0.75rem', color: 'text.secondary' }}>
+                TNT: {type.tntEquivalent}
+              </div>
+            </Box>
           </MenuItem>
         ))}
       </Paper>
