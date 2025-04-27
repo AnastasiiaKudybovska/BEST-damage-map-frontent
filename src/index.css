@@ -9,14 +9,11 @@
   --primary-color: #193784;
   /*  #4a6fa5 */
   --main-text-color: #27282b;
-  --error-color: #e32b2b;
-  --button-hover-color: #014e45; 
   /* #3a5a8f */
-  --borders--color: #a6a7ab;
   --grey-bg-color: #f0f0f0;
 
   --white-text-color: #fef8f8;
-  --white-hover-text-color: #26cfbc; 
+  --white-hover-text-color: #FFD700; 
 
 }
 * {
