@@ -1,11 +1,16 @@
 import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 
 const IPChecker = ({ children }) => {
   const [ipChecked, setIpChecked] = useState(false);
   const navigate = useNavigate();
-
+  const location = useLocation();
   useEffect(() => {
+   
+    if (location.pathname === '/access-denied') {
+        setIpChecked(true);
+        return;
+    }
     const checkIP = async () => {
       try {
         // First get the user's IP
