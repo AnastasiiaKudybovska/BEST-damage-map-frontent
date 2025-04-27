@@ -231,7 +231,7 @@ const DamageMap = () => {
   };
 
   return (
-    <Box sx={{ 
+    <Box id="map-section" sx={{ 
       height: '100vh',
       display: 'flex',
       flexDirection: 'column',

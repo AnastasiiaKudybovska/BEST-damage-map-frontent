@@ -24,6 +24,13 @@ const HomeIntro = () => {
     return () => clearInterval(interval);
   }, []);
 
+  const scrollToMap = () => {
+    const mapElement = document.getElementById('map-section');
+    if (mapElement) {
+      mapElement.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
   return (
     <Box sx={{ 
       minHeight: '92vh', 
@@ -82,8 +89,6 @@ const HomeIntro = () => {
         </Typography>
         
         <Button
-          component={Link}
-          to="/map"
           variant="contained"
           size="large"
           sx={{
@@ -104,6 +109,7 @@ const HomeIntro = () => {
             width: isMobile ? '100%' : 'auto',
             maxWidth: '300px'
           }}
+          onClick={scrollToMap}
         >
           Start Analysis
         </Button>
