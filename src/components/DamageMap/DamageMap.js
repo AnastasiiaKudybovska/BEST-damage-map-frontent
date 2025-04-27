@@ -181,10 +181,12 @@ const DamageMap = () => {
         return formattedRange;
       } else {
         console.error('Failed to fetch damage range from backend');
+        window.location.href = '/access-denied';
         return 'Error fetching data';
       }
     } catch (error) {
       console.error('Error fetching data:', error);
+      window.location.href = '/access-denied';
       return 'Error fetching data';
     }
   };
@@ -242,9 +244,11 @@ const DamageMap = () => {
 
       setPolygons(updatedPolygons);
     } else {
+      window.location.href = '/access-denied';
       console.error('Failed to fetch data from backend');
     }
   } catch (error) {
+    window.location.href = '/access-denied';
     console.error('Error fetching data:', error);
   }
 };
