@@ -31,7 +31,7 @@ const Footer = () => {
               mb: 1,
               fontSize: '1.25rem'
             }}>
-              WAR DAMAGE ASSESSMENT PLATFORM
+              SLID
             </Typography>
             <Typography variant="body2" sx={{ opacity: 0.8 }}>
               Advanced analytics for missile impact evaluation

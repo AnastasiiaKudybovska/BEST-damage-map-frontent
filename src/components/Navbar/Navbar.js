@@ -20,7 +20,7 @@ const Navbar = () => {
           <span className="menu-icon-line"></span>
         </label>
         
-        <NavLink to="/" className="logo">Damage Map</NavLink>
+        <NavLink to="/" className="logo">SLID</NavLink>
         
         <div className={`nav-links ${menuOpen ? 'open' : ''}`}>
           <NavLink to="/aboutUs" onClick={() => setMenuOpen(false)}>
