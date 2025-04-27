@@ -131,13 +131,18 @@ const DamageMap = () => {
   };
 
   const handleApiError = async (response) => {
-    if (response.status === 403) {
-      window.location.href = '/access-denied';
-      return true;
+    try {
+      const data = await response.json();
+      if (data.detail && data.detail.includes("Access denied. Only for Ukrainian IP.")) {
+        window.location.href = '/access-denied';
+        return true;
+      }
+    } catch (error) {
+      console.error('Error parsing error response:', error);
     }
     return false;
   };
-
+  
   const getDamageCostRange = async (zone, area_m2,  levels ) => {
     const total_house_area_m2 = area_m2;  
     const damage_level = zone;  
