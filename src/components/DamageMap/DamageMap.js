@@ -130,6 +130,21 @@ const DamageMap = () => {
     setSelectedZone(null);
   };
 
+  const handleApiError = async (response) => {
+    if (response.url.includes('/api/grade/') && response.status === 403) {
+      try {
+        const data = await response.json();
+        if (data.detail && data.detail.includes("Access denied. Only for Ukrainian IP.")) {
+          window.location.href = '/access-denied';
+          return true;
+        }
+      } catch (error) {
+        console.error('Error parsing error response:', error);
+      }
+    }
+    return false;
+  };
+
   const getDamageCostRange = async (zone, area_m2,  levels ) => {
     const total_house_area_m2 = area_m2;  
     const damage_level = zone;  
@@ -147,8 +162,11 @@ const DamageMap = () => {
         headers: {
           'Content-Type': 'application/json',
         },
+        credentials: 'include',
         body: JSON.stringify(payload),
       });
+      if (await handleApiError(response)) return null;
+      
       if (response.ok) {
         const data = await response.json();
         
@@ -188,9 +206,12 @@ const DamageMap = () => {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
+        credentials: 'include',
       },
       body: JSON.stringify(payload),
     });
+
+    if (await handleApiError(response)) return null;
 
     if (response.ok) {
       const data = await response.json();
