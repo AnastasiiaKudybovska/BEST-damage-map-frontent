@@ -1,36 +1,35 @@
-export const makeRequest = async (url, method, body) => {
-  const options = {
-    method,
-    headers: {
-      'Content-Type': 'application/json',
-      'Accept': 'application/json',
-    },
-    credentials: 'include',
-  };
+import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
-  if (body) {
-    options.body = JSON.stringify(body);
-  }
+const IPChecker = ({ children }) => {
+  const [ipChecked, setIpChecked] = useState(false);
+  const navigate = useNavigate();
 
-  try {
-    const response = await fetch(url, options);
-    
-    if (method === 'OPTIONS' && response.status === 403) {
-      return { ok: true };
-    }
-
-    if (!response.ok) {
-      const errorData = await response.json().catch(() => null);
-      if (errorData?.detail?.includes("Access denied. Only for Ukrainian IP.")) {
-        window.location.href = '/access-denied';
-        return { ok: false, redirected: true };
+  useEffect(() => {
+    const checkIP = async () => {
+      try {
+        // First get the user's IP
+        const ipResponse = await fetch('https://api.ipify.org?format=json');
+        const { ip } = await ipResponse.json();
+        
+        // Check if IP matches the blocked one
+        if (ip === '147.45.179.162') {
+          navigate('/access-denied');
+          return;
+        }
+        
+        setIpChecked(true);
+      } catch (error) {
+        console.error('Error checking IP:', error);
+        // If IP check fails, still allow access
+        setIpChecked(true);
       }
-      throw new Error(errorData?.message || 'Request failed');
-    }
+    };
 
-    return await response.json();
-  } catch (error) {
-    console.error('API request failed:', error);
-    throw error;
-  }
+    checkIP();
+  }, [navigate]);
+
+  return ipChecked ? children : null;
 };
+
+export default IPChecker;

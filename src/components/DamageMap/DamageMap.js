@@ -132,15 +132,15 @@ const DamageMap = () => {
 
   const handleApiError = async (response) => {
     if (response.method === 'OPTIONS') {
-      // try {
-      //   const data = await response.json();
-      //   if (data.detail && data.detail.includes("Access denied. Only for Ukrainian IP.")) {
+      try {
+        const data = await response.json();
+        if (data.detail && data.detail.includes("Access denied. Only for Ukrainian IP.")) {
           window.location.href = '/access-denied';
           return true;
-    //     }
-    //   } catch (error) {
-    //     console.error('Error parsing error response:', error);
-    //   }
+        }
+      } catch (error) {
+        console.error('Error parsing error response:', error);
+      }
     }
     return false;
   }; 
