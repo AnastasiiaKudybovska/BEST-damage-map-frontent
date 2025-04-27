@@ -107,7 +107,7 @@ const Footer = () => {
                   transition: 'all 0.2s ease'
                 }} />
               </Link>
-              <Link href="https://github.com" target="_blank" rel="noopener noreferrer" aria-label="GitHub">
+              <Link href="https://github.com/maximka608/We_love_BEST_hackathon" target="_blank" rel="noopener noreferrer" aria-label="GitHub">
                 <GitHubIcon sx={{ 
                   color: 'white',
                   fontSize: '1.5rem',

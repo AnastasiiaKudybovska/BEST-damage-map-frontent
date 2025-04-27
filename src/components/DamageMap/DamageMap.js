@@ -130,6 +130,14 @@ const DamageMap = () => {
     setSelectedZone(null);
   };
 
+  const handleApiError = async (response) => {
+    if (response.status === 403) {
+      window.location.href = '/access-denied';
+      return true;
+    }
+    return false;
+  };
+
   const getDamageCostRange = async (zone, area_m2,  levels ) => {
     const total_house_area_m2 = area_m2;  
     const damage_level = zone;  
@@ -149,6 +157,8 @@ const DamageMap = () => {
         },
         body: JSON.stringify(payload),
       });
+
+      if (await handleApiError(response)) return null;
   
       if (response.ok) {
         const data = await response.json();
@@ -187,6 +197,8 @@ const DamageMap = () => {
       },
       body: JSON.stringify(payload),
     });
+
+    if (await handleApiError(response)) return null;
 
     if (response.ok) {
       const data = await response.json();
