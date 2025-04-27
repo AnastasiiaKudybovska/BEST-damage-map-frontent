@@ -2,7 +2,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from 'r
 import HomePage from './pages/HomePage';
 import AboutUsPage from './pages/AboutUsPage';
 import Navbar from './components/Navbar/Navbar';
-// import Footer from './components/Footer/Footer
+import Footer from './components/Footer/Footer';
 
 function App() {
   return (
@@ -13,7 +13,7 @@ function App() {
         <Route path="/aboutUs" element={<AboutUsPage />} />
         <Route path="*" element={<Navigate to="/" />} /> 
       </Routes>
-      {/* <Footer/> */}
+      <Footer/>
     </>
   );
 }

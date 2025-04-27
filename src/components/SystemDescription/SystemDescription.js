@@ -52,10 +52,20 @@ const SystemDescription = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 1 }}
         >
-          <Typography variant="h1" className="hero-title">
+           <Typography
+                    variant={'h2'}
+                    component="h1"
+                    gutterBottom
+                    sx={{
+                      fontWeight: 'bold',
+                      color: '#ffffff',
+                      marginBottom: 4,
+                      textAlign: 'center',
+                    }}
+                  className="hero-title">
             WAR DAMAGE ASSESSMENT PLATFORM
           </Typography>
-          <Typography variant="h3" className="hero-subtitle">
+          <Typography variant="h4" className="hero-subtitle">
             Advanced analytics for missile impact evaluation
           </Typography>
         </motion.div>
