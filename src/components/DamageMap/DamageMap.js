@@ -14,87 +14,8 @@ L.Icon.Default.mergeOptions({
   shadowUrl: require('leaflet/dist/images/marker-shadow.png'),
 });
 
-const initialData = [
-    {
-      area_m2: 4904.28,
-      zone: 'small',
-      polygon: {
-        type: 'Polygon',
-        coordinates: [
-          [
-            [49.832044, 24.024187],
-            [49.831970, 24.024526],
-            [49.831294, 24.024172],
-            [49.831368, 24.023833],
-            [49.832044, 24.024187],
-          ],
-        ],
-      },
-      tags: {
-        'addr:housenumber': '11 к6а',
-        'addr:postcode': '79000',
-        'addr:street': 'Pavla Hrabovskoho Street',
-        building: 'yes',
-        start_date: '1966',
-      },
-    },
-    {
-      area_m2: 4805.21,
-      zone: 'hard',
-      polygon: {
-        type: 'Polygon',
-        coordinates: [
-          [
-            [49.839308, 24.028042],
-            [49.839158, 24.027526],
-            [49.839515, 24.027092],
-            [49.839606, 24.027313],
-            [49.839527, 24.027403],
-            [49.839644, 24.027818],
-            [49.839542, 24.027891],
-            [49.839512, 24.027813],
-            [49.839435, 24.027884],
-            [49.839450, 24.027938],
-            [49.839308, 24.028042],
-          ],
-        ],
-      },
-      tags: {
-        'addr:housenumber': '4',
-        'addr:postcode': '79000',
-        'addr:street': 'Mykoly Kopernyka Street',
-        building: 'yes',
-        'building:levels': '4',
-        source: 'Bing',
-        start_date: '1912',
-      },
-    },
-    {
-      area_m2: 3250.50,
-      zone: 'medium',
-      polygon: {
-        type: 'Polygon',
-        coordinates: [
-          [
-            [49.8432, 24.0258],
-            [49.8431, 24.0263],
-            [49.8427, 24.0261],
-            [49.8428, 24.0256],
-            [49.8432, 24.0258],
-          ],
-        ],
-      },
-      tags: {
-        'addr:housenumber': '7',
-        'addr:postcode': '79000',
-        'addr:street': 'Stepan Bandera Street',
-        building: 'yes',
-        'building:levels': '3',
-        start_date: '1985',
-      },
-    },
-  ];
-  
+const backendUrl = process.env.REACT_APP_BACKEND_URL;
+
 
 function MapClickHandler({ onClick, onFirstClick }) {
   useMapEvents({
@@ -108,11 +29,12 @@ function MapClickHandler({ onClick, onFirstClick }) {
 
 const DamageMap = () => {
   const [polygons, setPolygons] = useState([]);
+  const [initialData, setInitialData] = useState([])
   const [center] = useState([49.8419, 24.0315]);
   const [hasClicked, setHasClicked] = useState(false);
   const [selectedZone, setSelectedZone] = useState(null);
-  const [selectedRocket, setSelectedRocket] = useState(null);
-  const [rocketType, setRocketType] = useState('');
+  const [selectedRocket, setSelectedRocket] = useState({ type: 'shahed', tntEquivalent: 50 });
+  const [rocketType, setRocketType] = useState('shahed');
   const [menuOpen, setMenuOpen] = useState(false);
   const anchorRef = useRef(null);
 
@@ -208,27 +130,93 @@ const DamageMap = () => {
     setSelectedZone(null);
   };
 
-  const getDamageCostRange = (zone) => {
-    switch(zone) {
-      case 'hard': return '$50,000 - $200,000';
-      case 'medium': return '$20,000 - $50,000';
-      case 'small': return '$5,000 - $20,000';
-      default: return 'Unknown';
-    }
-  };
-
-  const sendDamageData = (latlng) => {
-    if (!selectedRocket) return;
-  
+  const getDamageCostRange = async (zone, area_m2,  levels ) => {
+    const total_house_area_m2 = area_m2;  
+    const damage_level = zone;  
+    const floors = levels || 1;  
+    
     const payload = {
-      latitude: latlng.lat,
-      longitude: latlng.lng,
-      trotil_equivalent: selectedRocket.tntEquivalent,
+      total_house_area_m2: total_house_area_m2,
+      damage_level: damage_level,
+      floors: floors,
     };
   
-    console.log('Sending payload to backend:', payload);
+    try {
+      const response = await fetch(`${backendUrl}/api/grade/predict`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(payload),
+      });
   
+      if (response.ok) {
+        const data = await response.json();
+        
+        const [minCost, maxCost] = data.prediction;
+        const formattedRange = `$${minCost.toLocaleString()} - $${maxCost.toLocaleString()}`;
+        
+        return formattedRange;
+      } else {
+        console.error('Failed to fetch damage range from backend');
+        return 'Error fetching data';
+      }
+    } catch (error) {
+      console.error('Error fetching data:', error);
+      return 'Error fetching data';
+    }
   };
+  
+
+  const sendDamageData = async (latlng) => {
+  if (!selectedRocket) return;
+
+  const payload = {
+    center_lat: latlng.lat,
+    center_lon: latlng.lng,
+    trotil_equivalent: selectedRocket.tntEquivalent,
+  };
+
+  console.log('Sending payload to backend:', payload);
+
+  try {
+    const response = await fetch(`${backendUrl}/api/grade/getmap`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(payload),
+    });
+
+    if (response.ok) {
+      const data = await response.json();
+      console.log('Data from backend:', data);
+      setInitialData(data.nodes);
+
+      const updatedPolygons = data.nodes.map((poly) => {
+        
+
+        const newCoordinates = poly.polygon.coordinates[0].map((coord) => {
+          return [coord[0], coord[1]];
+        });
+
+        return {
+          ...poly,
+          polygon: {
+            ...poly.polygon,
+            coordinates: [newCoordinates],
+          },
+        };
+      });
+
+      setPolygons(updatedPolygons);
+    } else {
+      console.error('Failed to fetch data from backend');
+    }
+  } catch (error) {
+    console.error('Error fetching data:', error);
+  }
+};
 
   return (
     <Box id="map-section" sx={{ 
@@ -282,7 +270,7 @@ const DamageMap = () => {
             />
             <RocketTypeFilter
               rocketType={rocketType}
-              handleRocketSelect={handleRocketSelect} // Тепер передаємо нову функцію
+              handleRocketSelect={handleRocketSelect} 
               menuOpen={menuOpen}
               handleMenuToggle={handleMenuToggle}
               anchorRef={anchorRef}
@@ -322,6 +310,7 @@ const DamageMap = () => {
                   fillOpacity: 0.5,
                   fillColor: zoneColors[poly.zone],
                 }}
+                onClick={()=> console.log(poly)}
                 eventHandlers={{
                   mouseover: (e) => {
                     e.target.setStyle({

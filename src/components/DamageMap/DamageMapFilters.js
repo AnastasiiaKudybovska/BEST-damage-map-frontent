@@ -22,6 +22,8 @@ export const DamageZoneFilter = ({
     gap: 1,
     alignItems: 'center',
     bgcolor: 'background.paper',
+    flexDirection: { xs: 'column', sm: 'row' },
+    alignItems: { xs: 'flex-start', sm: 'center' },
     p: 1,
     borderRadius: 1,
     boxShadow: 3
@@ -48,7 +50,8 @@ export const DamageZoneFilter = ({
         size="small"
         title="Reset filter"
         sx={{
-          ml: 1,
+          ml: { xs: 0, sm: 1 },
+          mt: { xs: 1, sm: 0 }, 
           color: 'text.secondary',
           '&:hover': {
             color: 'primary.main'
@@ -102,7 +105,8 @@ export const RocketTypeFilter = ({
     <Box sx={{
       position: 'absolute',
       top: 80,
-      left: 16,
+      left: { xs: 'auto', sm: 16 }, 
+      right: { xs: 10, sm: 'auto' },
       zIndex: 1000,
       display: 'flex',
       flexDirection: 'column'
