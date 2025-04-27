@@ -157,7 +157,7 @@ const DamageMap = () => {
         },
         body: JSON.stringify(payload),
       });
-
+      console.log(response);
       if (await handleApiError(response)) return null;
   
       if (response.ok) {
