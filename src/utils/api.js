@@ -5,34 +5,35 @@ const IPChecker = ({ children }) => {
   const [ipChecked, setIpChecked] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
+
   useEffect(() => {
-   
     if (location.pathname === '/access-denied') {
-        setIpChecked(true);
-        return;
+      setIpChecked(true);
+      return;
     }
+
     const checkIP = async () => {
       try {
-        // First get the user's IP
         const ipResponse = await fetch('https://api.ipify.org?format=json');
         const { ip } = await ipResponse.json();
         
-        // Check if IP matches the blocked one
         if (ip === '147.45.179.162') {
-          navigate('/access-denied');
-          return;
+          navigate('/access-denied', { replace: true });
+        } else {
+          setIpChecked(true);
         }
-        
-        setIpChecked(true);
       } catch (error) {
         console.error('Error checking IP:', error);
-        // If IP check fails, still allow access
         setIpChecked(true);
       }
     };
 
     checkIP();
-  }, [navigate]);
+  }, [navigate, location.pathname]); // додано location.pathname
+
+  if (location.pathname === '/access-denied') {
+    return children;
+  }
 
   return ipChecked ? children : null;
 };
